@@ -62,7 +62,7 @@ export function MemberInformationPage() {
                 ),
               },
         ],
-        []
+        [dispatch]
     )
 
     return (

@@ -27,6 +27,7 @@ function MemberInformationList({ columns, data, onTableLoad }) {
     )
 
     useEffect(() => {
+        /* eslint-disable */
         onTableLoad();
     }, [])
 

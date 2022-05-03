@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ofType } from 'redux-observable';
-import { map, switchMap, debounceTime, from, catchError, of } from 'rxjs';
+import { map, switchMap, debounceTime, from, catchError, of, mergeMap } from 'rxjs';
 
 import { ROOT_API } from '../constants';
 import { MemberInfoActionConstants, searchMemberInfoResponse, getMemberInfoResponse, saveOrUpdateMemberInfoError, saveOrUpdateMemberInfoResponse, deleteMemberInfoResponse, deleteMemberInfoError, getMemberInfoError, searchMemberInfoError } from './actions';
@@ -10,8 +10,8 @@ export const searchMemberInfoEpic = (action$) => {
         ofType(MemberInfoActionConstants.SEARCH_MEMBER_INFO_REQUEST),
         switchMap(action =>
             from(axios.get(ROOT_API + `/member/list?fullName=${action.payload}`)).pipe(
-                map(response => {
-                    return searchMemberInfoResponse(response.data.list);
+                mergeMap(response => {
+                    return of(searchMemberInfoResponse(response.data.list), saveOrUpdateMemberInfoResponse(0), getMemberInfoResponse({}));
                 }),
                 catchError((error) => {
                     return of(searchMemberInfoError({ generalError: 'Unknown Error' }));

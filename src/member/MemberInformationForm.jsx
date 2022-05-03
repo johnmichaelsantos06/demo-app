@@ -17,9 +17,10 @@ function MemberInformationForm({ onSuccess }) {
         if (_.isEqual(success, 1)) {
             swal("Success", "Operation success", "success").then((value) => {
                 onSuccess();
+                reset();
             });
-            reset();
         }
+    /* eslint-disable */
     }, [success, reset]);
 
     useEffect(() => {
