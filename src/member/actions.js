@@ -12,7 +12,8 @@ export const MemberInfoActionConstants = {
     DELETE_MEMBER_INFO_ERROR: "DELETE_MEMBER_INFO_ERROR",
     SEARCH_MEMBER_INFO_REQUEST: "SEARCH_MEMBER_INFO_REQUEST",
     SEARCH_MEMBER_INFO_RESPONSE: "SEARCH_MEMBER_INFO_RESPONSE",
-    SEARCH_MEMBER_INFO_ERROR: "SEARCH_MEMBER_INFO_ERROR"
+    SEARCH_MEMBER_INFO_ERROR: "SEARCH_MEMBER_INFO_ERROR",
+    SEARCH_BY_NAME_REQUEST: "SEARCH_BY_NAME_REQUEST"
 }
 
 export const getMemberInfoRequest = createAction(MemberInfoActionConstants.GET_MEMBER_INFO_REQUEST);
@@ -30,3 +31,5 @@ export const deleteMemberInfoError = createAction(MemberInfoActionConstants.DELE
 export const searchMemberInfoRequest = createAction(MemberInfoActionConstants.SEARCH_MEMBER_INFO_REQUEST);
 export const searchMemberInfoResponse = createAction(MemberInfoActionConstants.SEARCH_MEMBER_INFO_RESPONSE);
 export const searchMemberInfoError = createAction(MemberInfoActionConstants.SEARCH_MEMBER_INFO_ERROR);
+
+export const searchByNameRequest = createAction(MemberInfoActionConstants.SEARCH_BY_NAME_REQUEST);

@@ -7,7 +7,8 @@ const initialState = {
     success: 0,
     deletedMemberInfoId: 0,
     memberInfoList: [],
-    errorMessages: {}
+    errorMessages: {},
+    searchQuery: ''
 }
 
 export const memberInfoReducer = handleActions({
@@ -56,6 +57,12 @@ export const memberInfoReducer = handleActions({
     [MemberInfoActionConstants.SEARCH_MEMBER_INFO_ERROR]: (state, action) => {
         const newState = update(state, {
             errorMessages: { $set: action.payload }
+        });
+        return newState;
+    },
+    [MemberInfoActionConstants.SEARCH_BY_NAME_REQUEST]: (state, action) => {
+        const newState = update(state, {
+            searchQuery: { $set: action.payload }
         });
         return newState;
     },

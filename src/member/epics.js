@@ -3,7 +3,7 @@ import { ofType } from 'redux-observable';
 import { map, switchMap, debounceTime, from, catchError, of, mergeMap } from 'rxjs';
 
 import { ROOT_API } from '../constants';
-import { MemberInfoActionConstants, searchMemberInfoResponse, getMemberInfoResponse, saveOrUpdateMemberInfoError, saveOrUpdateMemberInfoResponse, deleteMemberInfoResponse, deleteMemberInfoError, getMemberInfoError, searchMemberInfoError } from './actions';
+import { MemberInfoActionConstants, searchMemberInfoResponse, getMemberInfoResponse, saveOrUpdateMemberInfoError, saveOrUpdateMemberInfoResponse, deleteMemberInfoResponse, deleteMemberInfoError, getMemberInfoError, searchMemberInfoError, searchByNameRequest } from './actions';
 
 export const searchMemberInfoEpic = (action$) => {
     return action$.pipe(
@@ -43,11 +43,11 @@ export const saveOrUpdateMemberInfoEpic = (action$) => {
         debounceTime(1000),
         switchMap(action =>
             from(axios.post(ROOT_API + '/member', action.payload)).pipe(
-                map(response => {
+                mergeMap(response => {
                     if (response.data.success === 0) {
-                        return saveOrUpdateMemberInfoError(response.data.errorMessages);
+                        return of(saveOrUpdateMemberInfoError(response.data.errorMessages));
                     } else {
-                        return saveOrUpdateMemberInfoResponse(response.data.success);
+                        return of(saveOrUpdateMemberInfoResponse(response.data.success), searchByNameRequest(''));
                     }
                 }),
                 catchError((error) => {

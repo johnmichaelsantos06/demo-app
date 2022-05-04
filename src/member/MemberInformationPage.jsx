@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
-import { deleteMemberInfoRequest, getMemberInfoRequest, searchMemberInfoRequest } from "./actions";
+import { deleteMemberInfoRequest, getMemberInfoRequest, searchByNameRequest, searchMemberInfoRequest } from "./actions";
 import MemberInformationForm from "./MemberInformationForm";
 import MemberInformationList from "./MemberInformationList";
 
 export function MemberInformationPage() {
     const dispatch = useDispatch();
-    const { memberInfoList } = useSelector(state => { return state.memberInfo });
+    const { memberInfoList, searchQuery } = useSelector(state => { return state.memberInfo });
 
     const memberInfoTableColumns = useMemo(
         () => [
@@ -76,7 +76,9 @@ export function MemberInformationPage() {
                         type="text" 
                         placeholder="John Doe"
                         className="u-full-width"
-                        onBlur={(e) => dispatch(searchMemberInfoRequest(e.target.value))}
+                        value={searchQuery}
+                        onChange={(e) => dispatch(searchByNameRequest(e.target.value))}
+                        onKeyDown={(e) => e.code === "Enter" ? dispatch(searchMemberInfoRequest(searchQuery)) : null}
                     />
                 </div>
             </div>
