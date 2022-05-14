@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ofType } from 'redux-observable';
-import { map, switchMap, debounceTime, from, catchError, of, mergeMap } from 'rxjs';
+import { switchMap, debounceTime, from, catchError, of, mergeMap } from 'rxjs';
 
 import { ROOT_API } from '../constants';
 import { MemberInfoActionConstants, searchMemberInfoResponse, getMemberInfoResponse, saveOrUpdateMemberInfoError, saveOrUpdateMemberInfoResponse, deleteMemberInfoResponse, deleteMemberInfoError, getMemberInfoError, searchMemberInfoError, searchByNameRequest } from './actions';
@@ -11,7 +11,11 @@ export const searchMemberInfoEpic = (action$) => {
         switchMap(action =>
             from(axios.get(ROOT_API + `/member/list?fullName=${action.payload}`)).pipe(
                 mergeMap(response => {
-                    return of(searchMemberInfoResponse(response.data.list), saveOrUpdateMemberInfoResponse(0), getMemberInfoResponse({}));
+                    if (response.data.success === 0) {
+                        return of(searchMemberInfoError(response.data.errorMessages));
+                    } else {
+                        return of(searchMemberInfoResponse(response.data.list), saveOrUpdateMemberInfoResponse(0), getMemberInfoResponse({}), searchMemberInfoError({}));
+                    }
                 }),
                 catchError((error) => {
                     return of(searchMemberInfoError({ generalError: 'Unknown Error' }));
@@ -26,8 +30,13 @@ export const getMemberInfoEpic = (action$) => {
         ofType(MemberInfoActionConstants.GET_MEMBER_INFO_REQUEST),
         switchMap(action =>
             from(axios.get(ROOT_API + `/member/${action.payload}`)).pipe(
-                map(response => {
-                    return getMemberInfoResponse(response.data.data);
+                mergeMap(response => {
+                    if (response.data.success === 0) {
+                        return of(getMemberInfoError(response.data.errorMessages));
+                    } else {
+                        return of(getMemberInfoResponse(response.data.data), getMemberInfoError({}));
+                    }
+                    
                 }),
                 catchError((error) => {
                     return of(getMemberInfoError({ generalError: 'Unknown Error' }));
@@ -47,7 +56,7 @@ export const saveOrUpdateMemberInfoEpic = (action$) => {
                     if (response.data.success === 0) {
                         return of(saveOrUpdateMemberInfoError(response.data.errorMessages));
                     } else {
-                        return of(saveOrUpdateMemberInfoResponse(response.data.success), searchByNameRequest(''));
+                        return of(saveOrUpdateMemberInfoResponse(response.data.success), searchByNameRequest(''), saveOrUpdateMemberInfoError({}));
                     }
                 }),
                 catchError((error) => {
@@ -63,8 +72,8 @@ export const deleteMemberInfoEpic = (action$) => {
         ofType(MemberInfoActionConstants.DELETE_MEMBER_INFO_REQUEST),
         switchMap(action =>
             from(axios.delete(ROOT_API + `/member/${action.payload}`)).pipe(
-                map(response => {
-                    return deleteMemberInfoResponse(response.data.data);
+                mergeMap(response => {
+                    return of(deleteMemberInfoResponse(response.data.data), deleteMemberInfoError({}));
                 }),
                 catchError((error) => {
                     return of(deleteMemberInfoError({ generalError: 'Unknown Error' }));
