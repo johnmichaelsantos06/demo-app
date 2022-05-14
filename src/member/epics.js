@@ -54,7 +54,7 @@ export const saveOrUpdateMemberInfoEpic = (action$) => {
             from(axios.post(ROOT_API + '/member', action.payload)).pipe(
                 mergeMap(response => {
                     if (response.data.success === 0) {
-                        return of(saveOrUpdateMemberInfoError(response.data.errorMessages));
+                        return of(saveOrUpdateMemberInfoError(response.data.errorMessages), saveOrUpdateMemberInfoError({}));
                     } else {
                         return of(saveOrUpdateMemberInfoResponse(response.data.success), searchByNameRequest(''), saveOrUpdateMemberInfoError({}));
                     }
